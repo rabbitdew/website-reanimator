@@ -4,11 +4,12 @@ if [ -f "$1" ]
 
 then
 
-read -p "Enter desired port number for ssh:" NEW_SSH_PORT
-read -p "Enter a root mariadb password:"  DATABASE_PASS
-read -p "Enter a name for the wp database:" DATABASE_WP
-read -p "Enter a username to use that database:" DATABASE_USER
-read -p "Enter a password for that username:" DATABASE_WP_PW
+read -p "Enter domain name: " SITE_NAME
+read -p "Enter desired port number for ssh: " NEW_SSH_PORT
+read -p "Enter a root mariadb password: "  DATABASE_PASS
+read -p "Enter a name for the wp database: " DATABASE_WP
+read -p "Enter a username to use that database: " DATABASE_USER
+read -p "Enter a password for that username: " DATABASE_WP_PW
 
 yum -y clean all
 yum -y upgrade
@@ -22,6 +23,8 @@ systemctl start firewalld
 systemctl enable httpd
 systemctl start httpd
 
+firewall-cmd --add-port="$NEW_SSH_PORT"/tcp --permanent
+firewall-cmd --add-port="$NEW_SSH_PORT"/tcp
 firewall-cmd --add-service=http --permanent
 firewall-cmd --add-service=http
 
@@ -62,7 +65,6 @@ sed -i 's/password_here/'$DATABASE_WP_PW'/' /var/www/html/lifeBlog/wp-config.php
   
 rsync -avP /tmp/var/www/html/lifeBlog/wp-content/ /var/www/html/lifeBlog/wp-content/
 chown -R apache:apache /var/www/html/
-
 chmod 600 /var/www/html/lifeBlog/wp-config.php
 
 #finish installation in web browser, then restore database: 
@@ -70,7 +72,10 @@ chmod 600 /var/www/html/lifeBlog/wp-config.php
 
 #rm -rf /tmp/latest.tar.gz /tmp/wordpress /tmp/var/"
 
-echo -e "ServerTokens Prod\nServerSignature Off\nTraceEnable Off\n" >> /etc/httpd/httpd.conf
+echo -e 'ServerName www."$SITE_NAME".com:80\nServerTokens Prod\nServerSignature Off\nTraceEnable Off\n' >> /etc/httpd/conf/httpd.conf
+
+systemctl enable httpd 
+systemctl start httpd 
 exit 0 
 
 else 
