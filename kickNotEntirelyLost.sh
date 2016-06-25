@@ -13,6 +13,8 @@ yum -y clean all
 yum -y upgrade
 yum -y install firewalld rsync php-gd php php-mysql policycoreutils mariadb mariadb-server httpd wget
 
+echo -e "yum -y upgrade\nlogger 'slips daily-yum'" >> /etc/cron.daily/daily_yum   
+
 systemctl enable firewalld
 systemctl start firewalld
 systemctl enable httpd
