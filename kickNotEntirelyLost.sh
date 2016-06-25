@@ -5,11 +5,18 @@ if [ -f "$1" ]
 then
 
 read -p "Enter domain name: " SITE_NAME
+read -p "Enter a new terminal user: " TERM_USER
 read -p "Enter desired port number for ssh: " NEW_SSH_PORT
 read -p "Enter a root mariadb password: "  DATABASE_PASS
 read -p "Enter a name for the wp database: " DATABASE_WP
 read -p "Enter a username to use that database: " DATABASE_USER
 read -p "Enter a password for that username: " DATABASE_WP_PW
+
+useradd "$TERM_USER" -G wheel 
+mkdir /home/"$TERM_USER"/.ssh
+cat "$2" > /home/"$TERM_USER"/.ssh/authorized_keys
+sed -i 's/PasswordAuthentication yes'/'PasswordAuthentication no'/ /etc/ssh/sshd_config
+systemctl restart sshd
 
 yum -y clean all
 yum -y upgrade
@@ -18,7 +25,6 @@ yum -y install firewalld rsync php-gd php php-mysql policycoreutils mariadb mari
 echo -e "yum -y upgrade\nlogger 'slips daily-yum'" >> /etc/cron.daily/daily_yum   
 echo -e "Port $NEW_SSH_PORT" >> /etc/ssh/sshd_config
 
-systemctl restart sshd
 systemctl enable firewalld
 systemctl start firewalld
 systemctl enable httpd
@@ -81,7 +87,7 @@ systemctl start httpd
 exit 0 
 
 else 
- echo "error: add backup tar as parameter"
+ echo "error: add backup tar and public key as parameter"
  exit 1 
 fi
 
