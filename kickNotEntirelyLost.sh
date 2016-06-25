@@ -18,10 +18,12 @@ yum -y install firewalld rsync php-gd php php-mysql policycoreutils mariadb mari
 echo -e "yum -y upgrade\nlogger 'slips daily-yum'" >> /etc/cron.daily/daily_yum   
 echo -e "Port $NEW_SSH_PORT" >> /etc/ssh/sshd_config
 
+systemctl restart sshd
 systemctl enable firewalld
 systemctl start firewalld
 systemctl enable httpd
 systemctl start httpd
+
 
 firewall-cmd --add-port="$NEW_SSH_PORT"/tcp --permanent
 firewall-cmd --add-port="$NEW_SSH_PORT"/tcp
