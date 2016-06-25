@@ -12,6 +12,8 @@ read -p "Enter a name for the wp database: " DATABASE_WP
 read -p "Enter a username to use that database: " DATABASE_USER
 read -p "Enter a password for that username: " DATABASE_WP_PW
 
+hostnamectl set-hostname "$SITE_NAME"
+
 useradd "$TERM_USER" -G wheel 
 mkdir /home/"$TERM_USER"/.ssh
 cat "$2" > /home/"$TERM_USER"/.ssh/authorized_keys
