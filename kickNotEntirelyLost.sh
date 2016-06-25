@@ -4,6 +4,7 @@ if [ -f "$1" ]
 
 then
 
+read -p "Enter desired port number for ssh:" NEW_SSH_PORT
 read -p "Enter a root mariadb password:"  DATABASE_PASS
 read -p "Enter a name for the wp database:" DATABASE_WP
 read -p "Enter a username to use that database:" DATABASE_USER
@@ -14,6 +15,7 @@ yum -y upgrade
 yum -y install firewalld rsync php-gd php php-mysql policycoreutils mariadb mariadb-server httpd wget
 
 echo -e "yum -y upgrade\nlogger 'slips daily-yum'" >> /etc/cron.daily/daily_yum   
+echo -e "Port $NEW_SSH_PORT" >> /etc/ssh/sshd_config
 
 systemctl enable firewalld
 systemctl start firewalld
