@@ -1,9 +1,5 @@
 #!/bin/bash
-#rm -rf /etc/yum.repos.d/*
 
-#mount -o loop /dev/sr0 /mnt/
-#echo -e "[DVDrepo]\nbaseurl=file:///mnt/\nenabled=1\ngpgcheck=0\n" > /etc/yum.repos.d/dvd.repo
-#read -p "Enter path to tar backup" $WWw_BACKUP
 if [ -f "$1" ] 
 
 then
