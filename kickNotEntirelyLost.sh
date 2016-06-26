@@ -85,7 +85,7 @@ chmod 600 /var/www/html/lifeBlog/wp-config.php
 
 rm -rf /tmp/latest.tar.gz /tmp/wordpress /tmp/var/
 
-echo -e 'ServerName www."$SITE_NAME".com:80\nServerTokens Prod\nServerSignature Off\nTraceEnable Off\n' >> /etc/httpd/conf/httpd.conf
+echo -e "ServerName www.$SITE_NAME.com:80\nServerTokens Prod\nServerSignature Off\nTraceEnable Off\n" >> /etc/httpd/conf/httpd.conf
 
 systemctl enable httpd 
 systemctl start httpd 
