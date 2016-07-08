@@ -17,16 +17,24 @@ hostnamectl set-hostname "$SITE_NAME"
 useradd "$TERM_USER" -G wheel 
 mkdir /home/"$TERM_USER"/.ssh
 
+dd of=/dev/zero if=/swapfile bs=1024 count=1048576
+chmod 0600 /swapfile
+echo -e "/swapfile\tswap\tswap\tdefaults\t0\t0" >> /etc/fstab
+swapon -a
+
 cat "$2" > /home/"$TERM_USER"/.ssh/authorized_keys
 sed -i 's/PasswordAuthentication yes'/'PasswordAuthentication no'/ /etc/ssh/sshd_config
-sed -i s/"#Port 22"/"Port $NEW_SSH_PORT"/ /etc/ssh/sshd_config
-echo -e "Port $NEW_SSH_PORT" >> /etc/ssh/sshd_config
-semanage port -a -t ssh_port_t -p tcp "$NEW_SSH_PORT"
 systemctl restart sshd
 
 yum -y clean all
 yum -y upgrade
 yum -y install firewalld rsync php-gd php php-mysql policycoreutils-python mariadb mariadb-server httpd wget
+
+sed -i s/"#Port 22"/"Port $NEW_SSH_PORT"/ /etc/ssh/sshd_config
+semanage port -a -t ssh_port_t -p tcp "$NEW_SSH_PORT"
+echo -e "Port $NEW_SSH_PORT" >> /etc/ssh/sshd_config
+sed -i s/"SELINUX=disabled"/"SELINUX=enforcing"/ /etc/selinux/config
+touch /.autorelabel
 
 
 echo -e "yum -y upgrade\nlogger 'slips daily-yum'" >> /etc/cron.daily/daily_yum   
